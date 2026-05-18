@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eToro Portfolio Dashboard — March 31, 2026 (Q1 Close)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-primary: #08090e;
+    --bg-card: #0f1117;
+    --bg-card2: #13161f;
+    --border: rgba(255,255,255,0.07);
+    --accent-blue: #4f8ef7;
+    --accent-green: #22d38b;
+    --accent-red: #f75d5d;
+    --accent-gold: #f7c752;
+    --accent-purple: #a78bfa;
+    --text-primary: #f0f2f8;
+    --text-muted: #7a829b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 28px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -20%, rgba(79,142,247,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(167,139,250,0.06) 0%, transparent 50%);
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f0f2f8 0%, var(--accent-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .header-left p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
+  .total-nav {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .total-nav span {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .total-pnl {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-red);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: rgba(79,142,247,0.25); }
+
+  .stat-card .label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .value {
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+
+  .stat-card .sub {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    color: var(--text-muted);
+  }
+
+  .green { color: var(--accent-green); }
+  .red   { color: var(--accent-red); }
+  .gold  { color: var(--accent-gold); }
+  .blue  { color: var(--accent-blue); }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.55fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 22px 18px;
+  }
+
+  .card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 18px;
+  }
+
+  .chart-wrap {
+    position: relative;
+  }
+
+  .donut-wrap {
+    height: 290px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 10px;
+    text-align: right;
+    font-weight: 500;
+  }
+
+  thead th:first-child { text-align: left; }
+
+  tbody tr {
+    border-top: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+  tbody td {
+    padding: 10px 10px;
+    font-size: 0.83rem;
+    text-align: right;
+    color: var(--text-primary);
+  }
+
+  tbody td:first-child { text-align: left; }
+
+  .ticker-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .asset-name {
+    font-weight: 600;
+    font-size: 0.87rem;
+  }
+
+  .asset-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .pnl-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .pnl-pill.pos {
+    background: rgba(34,211,139,0.12);
+    color: var(--accent-green);
+  }
+
+  .pnl-pill.neg {
+    background: rgba(247,93,93,0.12);
+    color: var(--accent-red);
+  }
+
+  .bar-chart-wrap { height: 290px; }
+
+  /* Legend below donut */
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+    margin-top: 14px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+  }
+
+  .legend-item .leg-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-item span.pct {
+    margin-left: auto;
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>📊 eToro Portfolio Dashboard</h1>
+    <p>Real Account · Fetched live · March 31, 2026 · 09:58 CEST</p>
+  </div>
+  <div class="header-right">
+    <div class="total-nav">
+      <span>Total NAV — Q1 Close (21:57 CEST)</span>
+      $22,659.00
+    </div>
+    <div class="total-pnl" style="color:var(--accent-green)">▲ +$947 today &nbsp;·&nbsp; -$1,541 Q1 (-6.4%)</div>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="summary-grid">
+  <div class="stat-card">
+    <div class="label">Best Performer</div>
+    <div class="value green">NFLX</div>
+    <div class="sub">+12.77% · $3,554 🚀</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Worst Performer</div>
+    <div class="value red">ACHR</div>
+    <div class="sub">-19.70% · $1,438</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Largest Position</div>
+    <div class="value blue">AMZN</div>
+    <div class="sub">$5,642 · 24.9% of book</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Green Positions</div>
+    <div class="value green">3</div>
+    <div class="sub">NFLX · NTLA · INFY ✅</div>
+  </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="charts-grid">
+  <!-- Donut -->
+  <div class="card">
+    <div class="card-title">Allocation by Net Value</div>
+    <div class="donut-wrap">
+      <canvas id="donutChart"></canvas>
+    </div>
+    <div class="legend-grid" id="donutLegend"></div>
+  </div>
+
+  <!-- P/L Bar -->
+  <div class="card">
+    <div class="card-title">Unrealized P/L % by Asset</div>
+    <div class="bar-chart-wrap">
+      <canvas id="plChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="card-title">Full Holdings Breakdown</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Asset</th>
+        <th>Price</th>
+        <th>Units</th>
+        <th>Avg Open</th>
+        <th>Unrealized P/L</th>
+        <th>P/L %</th>
+        <th>Net Value</th>
+        <th>Weight</th>
+      </tr>
+    </thead>
+    <tbody id="holdingsTable"></tbody>
+  </table>
+</div>
+
+<footer>Data sourced live from eToro Public API · Antigravity Financial AI · For informational purposes only</footer>
+
+<script>
+const TOTAL = 22659.00;
+
+const portfolio = [
+  { ticker: 'AMZN', name: 'Amazon.com Inc',           price: 208.97, units: 26.998, avgOpen: 222.14, pl: -355.57, plPct: -5.93,  netVal: 5641.83 },
+  { ticker: 'GOOG', name: 'Alphabet Inc.',             price: 286.05, units: 16.000, avgOpen: 314.99, pl: -463.10, plPct: -9.19,  netVal: 4576.90 },
+  { ticker: 'NFLX', name: 'Netflix, Inc.',             price: 96.04,  units: 37.000, avgOpen: 85.16,  pl: +402.41, plPct: +12.77, netVal: 3553.50 },
+  { ticker: 'BETA', name: 'BETA Technologies',         price: 14.72,  units: 195.12, avgOpen: 17.16,  pl: -476.69, plPct: -14.23, netVal: 2872.23 },
+  { ticker: 'INFY', name: 'Infosys Ltd. (ADR)',        price: 13.50,  units: 118.00, avgOpen: 13.28,  pl: +26.12,  plPct: +1.67,  netVal: 1593.00 },
+  { ticker: 'IONQ', name: 'IonQ Inc.',                 price: 28.84,  units: 55.006, avgOpen: 33.14,  pl: -236.32, plPct: -12.97, netVal: 1586.37 },
+  { ticker: 'ACHR', name: 'Archer Aviation Inc.',      price: 5.17,   units: 278.11, avgOpen: 6.44,   pl: -352.81, plPct: -19.70, netVal: 1437.81 },
+  { ticker: 'NTLA', name: 'Intellia Therapeutics',     price: 12.78,  units: 70.533, avgOpen: 12.11,  pl: +47.02,  plPct: +5.50,  netVal: 901.42  },
+  { ticker: 'JOBY', name: 'Joby Aviation Inc.',        price: 8.26,   units: 60.041, avgOpen: 9.88,   pl: -97.07,  plPct: -16.37, netVal: 495.93  },
+];
+
+const PALETTE = [
+  '#4f8ef7','#22d38b','#f7c752','#a78bfa','#f75d5d',
+  '#38bdf8','#fb923c','#4ade80','#e879f9','#94a3b8'
+];
+
+// --- Donut Chart ---
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: portfolio.map(p => p.ticker),
+    datasets: [{
+      data: portfolio.map(p => p.netVal),
+      backgroundColor: PALETTE,
+      borderColor: '#08090e',
+      borderWidth: 3,
+      hoverOffset: 10,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '70%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const pct = ((ctx.raw / TOTAL) * 100).toFixed(1);
+            return ` ${ctx.label}: $${ctx.raw.toLocaleString()} (${pct}%)`;
+          }
+        },
+        backgroundColor: '#1a1e2e',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        padding: 12,
+        titleFont: { family: 'Inter', size: 13 },
+        bodyFont: { family: 'Inter', size: 12 },
+      }
+    }
+  }
+});
+
+// Legend
+const legendEl = document.getElementById('donutLegend');
+portfolio.forEach((p, i) => {
+  const pct = ((p.netVal / TOTAL) * 100).toFixed(1);
+  legendEl.innerHTML += `
+    <div class="legend-item">
+      <div class="leg-dot" style="background:${PALETTE[i]}"></div>
+      <span>${p.ticker}</span>
+      <span class="pct">${pct}%</span>
+    </div>`;
+});
+
+// --- P/L Bar Chart ---
+const sorted = [...portfolio].sort((a,b) => a.plPct - b.plPct);
+const plCtx = document.getElementById('plChart').getContext('2d');
+new Chart(plCtx, {
+  type: 'bar',
+  data: {
+    labels: sorted.map(p => p.ticker),
+    datasets: [{
+      label: 'P/L %',
+      data: sorted.map(p => p.plPct),
+      backgroundColor: sorted.map(p => p.plPct >= 0
+        ? 'rgba(34,211,139,0.8)'
+        : 'rgba(247,93,93,0.75)'),
+      borderColor: sorted.map(p => p.plPct >= 0
+        ? 'rgba(34,211,139,1)'
+        : 'rgba(247,93,93,1)'),
+      borderWidth: 1.5,
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw > 0 ? '+' : ''}${ctx.raw.toFixed(2)}%`
+        },
+        backgroundColor: '#1a1e2e',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        padding: 12,
+        titleFont: { family: 'Inter', size: 13 },
+        bodyFont: { family: 'Inter', size: 12 },
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: {
+          color: '#7a829b',
+          font: { family: 'Inter', size: 11 },
+          callback: v => v + '%'
+        },
+        border: { dash: [4, 4] }
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          color: '#f0f2f8',
+          font: { family: 'Inter', size: 12, weight: '600' }
+        }
+      }
+    }
+  }
+});
+
+// --- Table ---
+const tbody = document.getElementById('holdingsTable');
+portfolio.forEach((p, i) => {
+  const weight = ((p.netVal / TOTAL) * 100).toFixed(1);
+  const isPos = p.plPct >= 0;
+  tbody.innerHTML += `
+    <tr>
+      <td>
+        <div class="ticker-badge">
+          <div class="dot" style="background:${PALETTE[i]}"></div>
+          <div>
+            <div class="asset-name">${p.ticker}</div>
+            <div class="asset-sub">${p.name}</div>
+          </div>
+        </div>
+      </td>
+      <td>$${p.price.toFixed(2)}</td>
+      <td>${p.units.toFixed(3)}</td>
+      <td style="color:var(--text-muted)">$${p.avgOpen.toFixed(2)}</td>
+      <td class="${isPos ? 'green' : 'red'}">${isPos ? '+' : ''}$${p.pl.toFixed(2)}</td>
+      <td>
+        <span class="pnl-pill ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : ''}${p.plPct.toFixed(2)}%</span>
+      </td>
+      <td style="font-weight:600">$${p.netVal.toLocaleString()}</td>
+      <td style="color:var(--text-muted)">${weight}%</td>
+    </tr>`;
+});
+</script>
+</body>
+</html>

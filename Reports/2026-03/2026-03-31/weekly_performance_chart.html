@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Performance — March 25–31, 2026 (Q1 Close)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #08090e;
+    --card: #0f1117;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f2f8;
+    --muted: #7a829b;
+    --green: #22d38b;
+    --red: #f75d5d;
+    --gold: #f7c752;
+    --blue: #4f8ef7;
+    --purple: #a78bfa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    padding: 28px;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -15%, rgba(79,142,247,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(167,139,250,0.05) 0%, transparent 50%);
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f0f2f8 0%, #4f8ef7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .header p { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .header-right { text-align: right; font-size: 0.78rem; color: var(--muted); }
+
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .asset-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: pointer;
+  }
+  .asset-card:hover { border-color: rgba(79,142,247,0.3); transform: translateY(-2px); }
+  .asset-card.active { border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.07); }
+  .asset-card .tick { font-size: 0.75rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; }
+  .asset-card .pct {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .asset-card .pct.pos { color: var(--green); }
+  .asset-card .pct.neg { color: var(--red); }
+  .asset-card .price { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px 18px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); cursor: pointer; }
+  .leg .dot { width: 10px; height: 3px; border-radius: 2px; }
+
+  .chart-wrap { height: 320px; }
+  .chart-wrap-lg { height: 260px; }
+
+  .toggle-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .toggle-btn {
+    padding: 5px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.73rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toggle-btn:hover { border-color: rgba(79,142,247,0.4); color: var(--text); }
+  .toggle-btn.active { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.5); color: #4f8ef7; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .note {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 10px;
+    opacity: 0.7;
+    text-align: right;
+  }
+
+  footer { margin-top: 20px; text-align: center; font-size: 0.7rem; color: var(--muted); opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📅 Weekly Performance — March 25–31, 2026 (Q1 Close)</h1>
+    <p>eToro Real Account · Source: Morning & Evening Notes · Prices in USD unless noted</p>
+  </div>
+  <div class="header-right">
+    Week of March 25 (Mon) → March 31 (Tue)<br>
+    6 data points · Q1 Final Week
+  </div>
+</div>
+
+<!-- Asset summary cards -->
+<div class="summary-row" id="assetCards"></div>
+
+<!-- Total NAV chart -->
+<div class="charts-grid">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Total Portfolio NAV — Weekly Trend (USD)</div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" onclick="toggleNAV('abs')">Absolute $</button>
+        <button class="toggle-btn" onclick="toggleNAV('pct')">% Change</button>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="navChart"></canvas></div>
+    <p class="note">NAV = sum of all real-account positions at reported prices</p>
+  </div>
+
+  <div class="two-col">
+    <!-- Normalized price chart -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Individual Price (Indexed, Mon 25 = 100)</div>
+      </div>
+      <div class="legend-row" id="indexedLegend" style="margin-bottom:14px;"></div>
+      <div class="chart-wrap-lg"><canvas id="indexedChart"></canvas></div>
+    </div>
+
+    <!-- Daily change heatmap-style bar -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Week Total Return by Asset</div>
+      </div>
+      <div class="chart-wrap-lg"><canvas id="weekReturnChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<footer>Data sourced from Antigravity morning/evening notes · Prices as reported at time of writing · For informational purposes only</footer>
+
+<script>
+const LABELS = ['Mon Mar 25', 'Tue Mar 26', 'Wed Mar 27', 'Fri Mar 27*', 'Mon Mar 30', 'Tue Mar 31 (Close)'];
+
+// Price series — one array per asset
+const ASSETS = [
+  { ticker: 'AMZN', color: '#4f8ef7', units: 26.998,  prices: [212.31, 210.38, 207.77, 201.01, 200.15, 208.97] },
+  { ticker: 'GOOG', color: '#a78bfa', units: 16.000,  prices: [289.19, 288.41, 281.12, 274.98, 274.40, 286.05] },
+  { ticker: 'NFLX', color: '#22d38b', units: 37.000,  prices: [92.36,  91.92,  93.25,  93.38,  93.23,  96.04 ] },
+  { ticker: 'BETA', color: '#fb923c', units: 195.124, prices: [15.53,  15.34,  14.94,  14.27,  14.09,  14.72 ] },
+  { ticker: 'IONQ', color: '#38bdf8', units: 55.006,  prices: [32.49,  31.76,  30.02,  27.59,  27.81,  28.84 ] },
+  { ticker: 'ACHR', color: '#f75d5d', units: 278.108, prices: [5.50,   5.56,   5.36,   5.10,   5.09,   5.17  ] },
+  { ticker: 'INFY', color: '#94a3b8', units: 118.000, prices: [13.24,  13.16,  13.17,  12.81,  12.83,  13.50 ] },
+  { ticker: 'NTLA', color: '#4ade80', units: 70.533,  prices: [13.43,  13.26,  13.25,  12.45,  12.37,  12.78 ] },
+  { ticker: 'JOBY', color: '#e879f9', units: 60.041,  prices: [9.04,   8.97,   8.47,   8.04,   8.10,   8.26  ] },
+];
+
+// Calculate total NAV per day
+const NAV = LABELS.map((_, i) =>
+  ASSETS.reduce((sum, a) => sum + (a.prices[i] * a.units), 0)
+);
+const NAV_START = NAV[0];
+const NAV_PCT = NAV.map(v => +((v / NAV_START - 1) * 100).toFixed(2));
+
+// Week total return per asset
+const WEEK_RETURN = ASSETS.map(a => +((a.prices[5] / a.prices[0] - 1) * 100).toFixed(2));
+
+// Indexed prices (Mon = 100)
+const INDEXED = ASSETS.map(a => a.prices.map(p => +((p / a.prices[0]) * 100).toFixed(2)));
+
+// ---- Asset Summary Cards ----
+const cardContainer = document.getElementById('assetCards');
+ASSETS.forEach((a, i) => {
+  const ret = WEEK_RETURN[i];
+  const isPos = ret >= 0;
+  const card = document.createElement('div');
+  card.className = 'asset-card';
+  card.id = `card-${a.ticker}`;
+  card.innerHTML = `
+    <div class="tick" style="color:${a.color}">${a.ticker}</div>
+    <div class="pct ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : ''}${ret.toFixed(2)}%</div>
+    <div class="price">$${a.prices[0].toFixed(2)} → $${a.prices[5].toFixed(2)}</div>
+  `;
+  cardContainer.appendChild(card);
+});
+
+// ---- NAV Chart ----
+const navCtx = document.getElementById('navChart').getContext('2d');
+let navMode = 'abs';
+let navChartInst = null;
+
+function buildNAVChart(mode) {
+  if (navChartInst) navChartInst.destroy();
+  const data = mode === 'abs' ? NAV : NAV_PCT;
+  const label = mode === 'abs' ? 'Total NAV (USD)' : 'NAV Change (%)';
+
+  navChartInst = new Chart(navCtx, {
+    type: 'line',
+    data: {
+      labels: LABELS,
+      datasets: [{
+        label,
+        data,
+        borderColor: '#4f8ef7',
+        backgroundColor: 'rgba(79,142,247,0.10)',
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: data.map(v =>
+          mode === 'abs' ? (v < data[0] ? '#f75d5d' : '#22d38b') :
+                           (v < 0 ? '#f75d5d' : '#22d38b')
+        ),
+        pointBorderColor: '#08090e',
+        pointBorderWidth: 2,
+        fill: true,
+        tension: 0.35,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1e2e',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            label: ctx => mode === 'abs'
+              ? ` $${ctx.raw.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`
+              : ` ${ctx.raw > 0 ? '+' : ''}${ctx.raw}%`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#7a829b', font: { family: 'Inter', size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)', dash: [4, 4] },
+          ticks: {
+            color: '#7a829b',
+            font: { family: 'Inter', size: 11 },
+            callback: v => mode === 'abs' ? '$' + v.toLocaleString() : v + '%'
+          }
+        }
+      }
+    }
+  });
+}
+buildNAVChart('abs');
+
+function toggleNAV(mode) {
+  navMode = mode;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  buildNAVChart(mode);
+}
+
+// ---- Indexed Chart (normalized) ----
+const idxCtx = document.getElementById('indexedChart').getContext('2d');
+const legendEl = document.getElementById('indexedLegend');
+const visibleAssets = new Set(ASSETS.map(a => a.ticker));
+
+const idxChart = new Chart(idxCtx, {
+  type: 'line',
+  data: {
+    labels: LABELS,
+    datasets: ASSETS.map((a, i) => ({
+      label: a.ticker,
+      data: INDEXED[i],
+      borderColor: a.color,
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      pointRadius: 3,
+      pointBackgroundColor: a.color,
+      tension: 0.3,
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1e2e',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        padding: 10,
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(1)}` }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#7a829b', font: { family: 'Inter', size: 10 } } },
+      y: {
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#7a829b', font: { family: 'Inter', size: 10 }, callback: v => v.toFixed(0) },
+      }
+    }
+  }
+});
+
+// Build legend for indexed chart
+ASSETS.forEach((a, i) => {
+  const el = document.createElement('div');
+  el.className = 'leg';
+  el.innerHTML = `<div class="dot" style="background:${a.color}"></div><span>${a.ticker}</span>`;
+  el.onclick = () => {
+    const ds = idxChart.data.datasets[i];
+    ds.hidden = !ds.hidden;
+    el.style.opacity = ds.hidden ? '0.35' : '1';
+    idxChart.update();
+  };
+  legendEl.appendChild(el);
+});
+
+// ---- Week Return Bar Chart ----
+const retCtx = document.getElementById('weekReturnChart').getContext('2d');
+const sortedIdx = [...WEEK_RETURN.keys()].sort((a, b) => WEEK_RETURN[a] - WEEK_RETURN[b]);
+
+new Chart(retCtx, {
+  type: 'bar',
+  data: {
+    labels: sortedIdx.map(i => ASSETS[i].ticker),
+    datasets: [{
+      label: 'Week Return %',
+      data: sortedIdx.map(i => WEEK_RETURN[i]),
+      backgroundColor: sortedIdx.map(i => WEEK_RETURN[i] >= 0
+        ? 'rgba(34,211,139,0.80)'
+        : 'rgba(247,93,93,0.75)'),
+      borderColor: sortedIdx.map(i => WEEK_RETURN[i] >= 0
+        ? '#22d38b' : '#f75d5d'),
+      borderWidth: 1.5,
+      borderRadius: 5,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1a1e2e',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        padding: 10,
+        callbacks: { label: ctx => ` ${ctx.raw > 0 ? '+' : ''}${ctx.raw.toFixed(2)}%` }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#7a829b', font: { family: 'Inter', size: 10 }, callback: v => v + '%' }
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: '#f0f2f8', font: { family: 'Inter', size: 12, weight: '600' } }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

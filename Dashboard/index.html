@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity | Mission Control</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-blob"></div>
+    <div class="background-blob secondary"></div>
+
+    <main class="dashboard-container">
+        <!-- Header & Countdown -->
+        <header class="hero-header glass">
+            <div class="logo-area">
+                <span class="logo-text">ANTIGRAVITY <span class="logo-sub">FINANCIAL</span></span>
+                <span class="status-indicator">● LIVE MARKET SYNC</span>
+            </div>
+            
+            <div class="countdown-section">
+                <h2 class="section-title">ISLAMABAD TALKS COMMENCEMENT (APRIL 10)</h2>
+                <div id="countdown" class="timer-display">
+                    <div class="time-block"><span id="days">00</span><small>DAYS</small></div>
+                    <div class="time-separator">:</div>
+                    <div class="time-block"><span id="hours">00</span><small>HRS</small></div>
+                    <div class="time-separator">:</div>
+                    <div class="time-block"><span id="minutes">00</span><small>MIN</small></div>
+                    <div class="time-separator">:</div>
+                    <div class="time-block"><span id="seconds">00</span><small>SEC</small></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="summary-grid">
+            <div class="summary-card glass highlight">
+                <span class="card-label">TOTAL NET VALUE</span>
+                <h3 id="total-net-value">$23,614.29</h3>
+                <span class="card-delta positive">+1.2% (24H)</span>
+            </div>
+            <div class="summary-card glass">
+                <span class="card-label">AVAILABLE CASH</span>
+                <h3 id="available-cash">$1,768.44</h3>
+                <span class="card-sublabel">UNALLOCATED DRY POWDER</span>
+            </div>
+            <div class="summary-card glass">
+                <span class="card-label">CRISIS RISKMETER</span>
+                <div class="risk-bar-container">
+                    <div class="risk-bar" style="width: 72%;"></div>
+                </div>
+                <span class="card-sublabel">72% EXPOSURE TO HIGH-BETA</span>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-row">
+            <div class="chart-container glass">
+                <h3 class="chart-title">ASSET DIVERSIFICATION</h3>
+                <canvas id="diversificationChart"></canvas>
+            </div>
+            <div class="chart-container glass">
+                <h3 class="chart-title">PORTFOLIO WEIGHTING ($)</h3>
+                <canvas id="weightingChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Asset Table/Grid -->
+        <section class="asset-list-section glass">
+            <div class="section-header">
+                <div>
+                    <h3 class="chart-title" style="margin-bottom: 5px;">PORTFOLIO HOLDINGS</h3>
+                    <div id="last-updated" style="font-size: 10px; color: var(--accent-secondary); font-weight: 700; letter-spacing: 1px;">LAST SYNC: ---</div>
+                </div>
+                <div class="header-controls" style="display: flex; gap: 20px; align-items: center;">
+                    <button id="refresh-btn" onclick="location.reload()" style="background: none; border: 1px solid var(--accent-secondary); color: var(--accent-secondary); font-family: 'Space Mono', monospace; font-size: 10px; padding: 5px 12px; cursor: pointer; border-radius: 4px; transition: all 0.2s ease;">REFRESH DATA</button>
+                    <div class="crisis-toggle-container">
+                        <span class="toggle-label">NEGOTIATION STALL (-12% STRESS)</span>
+                        <label class="switch">
+                            <input type="checkbox" id="crisis-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="asset-grid" id="asset-grid">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+        <footer class="dash-footer">
+            <p>Data refreshed automatically from <code>portfolio_result.json</code> | Restricted Access (Antigravity Terminal)</p>
+        </footer>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
