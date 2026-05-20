@@ -1,0 +1,8 @@
+{
+  "name": "etoro",
+  "version": "0.1.0",
+  "description": "Integration with eToro for portfolio management, trading, and social analytics",
+  "author": {
+    "name": "Anthropic FSI"
+  }
+}
