@@ -14,11 +14,14 @@
     *   **Order 2**: Buy Limit at **$46.00** (8 units, amount $368.00)
     *   *Total Pending Allocation*: **$783.80**
     *   *Status*: **PENDING** (Current price: $48.46)
-    *   *Trigger*: Set to accumulate additional shares of our core quantum growth engine if volatility occurs during or after today's investor conference.
+*   **Symbotic (SYM)**: Proposed Buy Limit Order:
+    *   **Target**: Buy Limit at **$43.00** (8 units, amount $344.00)
+    *   *Status*: **PROPOSED** (Current price: $46.61)
+    *   *Trigger*: Set to accumulate shares of the AI-enabled physical automation layer at its structural DCF valuation support floor.
 
 ## 3. Cash & Risk Allocation Plan
-*   **Cash Buffer**: Remaining available credit is **$454.23** if both IONQ orders execute. This restores our dry powder buffer.
-*   **Hold Figma (FIG)**: Figaro / Figma gains continue to hold (+19.87% profit). No action, let it run.
+*   **Cash Buffer**: Remaining available credit will be **$110.23** if both IONQ and SYM orders execute. If only IONQ executes, cash buffer is **$454.23**.
+*   **Hold Figma (FIG)**: Gains continue to hold (+19.87% profit). Let it run.
 *   **Hold Hedges**: Keep Silver at $74.46 average and Gold at $77.90 average active.
 
 ---

@@ -15,3 +15,7 @@ This directory contains financial strategy reports and analysis generated on May
 3. **Portfolio_Analysis_May20.md**
    - **Type**: Core Allocation Review
    - **Description**: Deep dive into the 11 monitored assets, highlighting individual performance metrics, unrealized P/L, and sector exposure.
+
+4. **SYM_valuation_report.md**
+   - **Type**: Equity Valuation Report
+   - **Description**: Technical and fundamental evaluation of Symbotic Inc. (SYM) for potential integration into the portfolio.
